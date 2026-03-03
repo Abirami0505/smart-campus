@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Database
+db.sqlite3
+
+# Media files (QR codes)
+media/
+
+# Virtual environment
+venv/
+.env
+
+# VS Code
+.vscode/
