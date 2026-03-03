@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <h3>Welcome, {{ user.username }}</h3>
+
+    <p><strong>Total Points:</strong> {{ profile.total_points }}</p>
+
+    <!-- BADGE DISPLAY -->
+    <p><strong>Badge:</strong>
+        {% if profile.badge == "Gold" %}
+            <span class="badge bg-warning text-dark fs-6">🥇 Gold</span>
+        {% elif profile.badge == "Silver" %}
+            <span class="badge bg-secondary fs-6">🥈 Silver</span>
+        {% elif profile.badge == "Bronze" %}
+            <span class="badge bg-warning fs-6">🥉 Bronze</span>
+        {% else %}
+            <span class="badge bg-light text-dark fs-6">No Badge</span>
+        {% endif %}
+    </p>
+
+    <!-- PROGRESS BAR (Clean Version Without Inline CSS) -->
+    {% if profile.total_points < 50 %}
+        <p class="mt-2"><small>Progress to Bronze (50 pts)</small></p>
+        <div class="progress mb-3">
+            <div class="progress-bar bg-warning"
+                 role="progressbar"
+                 style="width: {{ profile.total_points }}%"
+                 aria-valuenow="{{ profile.total_points }}"
+                 aria-valuemin="0"
+                 aria-valuemax="50">
+                {{ profile.total_points }}%
+            </div>
+        </div>
+    {% elif profile.total_points < 100 %}
+        {% with silver_progress=profile.total_points|add:"-50" %}
+        <p class="mt-2"><small>Progress to Silver (100 pts)</small></p>
+        <div class="progress mb-3">
+            <div class="progress-bar bg-secondary"
+                 role="progressbar"
+                 style="width: {{ silver_progress }}%"
+                 aria-valuenow="{{ profile.total_points }}"
+                 aria-valuemin="50"
+                 aria-valuemax="100">
+                {{ silver_progress }}%
+            </div>
+        </div>
+        {% endwith %}
+    {% endif %}
+
+    <hr>
+
+    <h4>Upcoming Events</h4>
+
+    {% for event in events %}
+    <div class="card mb-3 shadow-sm">
+        <div class="card-body">
+            <h5>{{ event.title }}</h5>
+            <p>{{ event.description }}</p>
+            <p>
+                <strong>Date:</strong> {{ event.date }} |
+                <strong>Points:</strong> {{ event.points }}
+            </p>
+
+            {% if event.id in registered_event_ids %}
+                {% for reg in registrations %}
+                    {% if reg.event.id == event.id %}
+                        <a href="{% url 'my_qr' reg.id %}"
+                           class="btn btn-success btn-sm">
+                           View QR
+                        </a>
+
+                        <a href="{% url 'unregister_event' event.id %}"
+                           class="btn btn-danger btn-sm">
+                           Unregister
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <a href="{% url 'register_event' event.id %}"
+                   class="btn btn-primary btn-sm">
+                   Register
+                </a>
+            {% endif %}
+
+        </div>
+    </div>
+    {% empty %}
+        <p>No events available.</p>
+    {% endfor %}
+
+</div>
+
+{% endblock %}

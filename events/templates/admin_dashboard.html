@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>Admin Analytics Dashboard</h2>
+<hr>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card p-3 shadow">
+            <h5>Total Events</h5>
+            <h3>{{ total_events }}</h3>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 shadow">
+            <h5>Total Registrations</h5>
+            <h3>{{ total_registrations }}</h3>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 shadow">
+            <h5>Total Attendance</h5>
+            <h3>{{ total_attended }}</h3>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 shadow">
+            <h5>Attendance Rate</h5>
+            <h3>{{ attendance_rate }}%</h3>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<h4>Event-wise Analytics</h4>
+
+<table class="table table-bordered mt-3">
+    <thead>
+        <tr>
+            <th>Event</th>
+            <th>Registrations</th>
+            <th>Attendance</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for event in event_stats %}
+        <tr>
+            <td>{{ event.title }}</td>
+            <td>{{ event.total_registered }}</td>
+            <td>{{ event.total_attended }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h3>Event Participants</h3>
+
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Student</th>
+            <th>Attended</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for reg in registrations %}
+        <tr>
+            <td>{{ reg.student.username }}</td>
+            <td>
+                {% if reg.attended %}
+                    <span class="badge bg-success">Present</span>
+                {% else %}
+                    <span class="badge bg-secondary">Absent</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

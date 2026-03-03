@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h3>Your Event QR Code</h3>
+
+<div class="card p-4 shadow-sm text-center">
+
+    <p><strong>Event:</strong> {{ registration.event.title }}</p>
+    <p><strong>QR Code ID:</strong> {{ registration.qr_code }}</p>
+
+    <img src="/media/{{ registration.qr_code }}.png"
+         class="img-fluid mt-3"
+         style="max-width:250px;">
+
+</div>
+
+{% endblock %}
