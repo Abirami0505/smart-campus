@@ -8,6 +8,7 @@ from events import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('dashboard/', views.dashboard, name='dashboard_page'),
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
 
     # Authentication
