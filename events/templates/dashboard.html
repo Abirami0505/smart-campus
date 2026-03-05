@@ -20,7 +20,7 @@
         {% endif %}
     </p>
 
-    <!-- PROGRESS BAR (Clean Version Without Inline CSS) -->
+    <!-- PROGRESS BAR -->
     {% if profile.total_points < 50 %}
         <p class="mt-2"><small>Progress to Bronze (50 pts)</small></p>
         <div class="progress mb-3">
@@ -33,6 +33,7 @@
                 {{ profile.total_points }}%
             </div>
         </div>
+
     {% elif profile.total_points < 100 %}
         {% with silver_progress=profile.total_points|add:"-50" %}
         <p class="mt-2"><small>Progress to Silver (100 pts)</small></p>
@@ -40,9 +41,9 @@
             <div class="progress-bar bg-secondary"
                  role="progressbar"
                  style="width: {{ silver_progress }}%"
-                 aria-valuenow="{{ profile.total_points }}"
-                 aria-valuemin="50"
-                 aria-valuemax="100">
+                 aria-valuenow="{{ silver_progress }}"
+                 aria-valuemin="0"
+                 aria-valuemax="50">
                 {{ silver_progress }}%
             </div>
         </div>
@@ -56,36 +57,54 @@
     {% for event in events %}
     <div class="card mb-3 shadow-sm">
         <div class="card-body">
-            <h5>{{ event.title }}</h5>
+
+            <h5>{{ event.name }}</h5>
             <p>{{ event.description }}</p>
+
             <p>
                 <strong>Date:</strong> {{ event.date }} |
                 <strong>Points:</strong> {{ event.points }}
             </p>
 
+            <p>
+                <strong>Registration Deadline:</strong>
+                {{ event.registration_deadline|date:"M d, Y H:i" }}
+            </p>
+
+            <!-- EVENT ACTION BUTTONS -->
+
             {% if event.id in registered_event_ids %}
+
+                <button class="btn btn-secondary btn-sm" disabled>
+                    Registered
+                </button>
+
                 {% for reg in registrations %}
                     {% if reg.event.id == event.id %}
                         <a href="{% url 'my_qr' reg.id %}"
                            class="btn btn-success btn-sm">
                            View QR
                         </a>
-
-                        <a href="{% url 'unregister_event' event.id %}"
-                           class="btn btn-danger btn-sm">
-                           Unregister
-                        </a>
                     {% endif %}
                 {% endfor %}
+
+                <a href="{% url 'unregister_event' event.id %}"
+                   class="btn btn-danger btn-sm">
+                   Unregister
+                </a>
+
             {% else %}
+
                 <a href="{% url 'register_event' event.id %}"
                    class="btn btn-primary btn-sm">
                    Register
                 </a>
+
             {% endif %}
 
         </div>
     </div>
+
     {% empty %}
         <p>No events available.</p>
     {% endfor %}

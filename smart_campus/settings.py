@@ -23,7 +23,7 @@ SECRET_KEY = 'django-insecure-smart-campus-dev-key'
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['smart-campus-61nk.onrender.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.onrender.com']
 
 
 # -------------------------------------------------

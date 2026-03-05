@@ -6,7 +6,7 @@ from django.urls import reverse
 
 @admin.register(Registration)
 class RegistrationAdmin(admin.ModelAdmin):
-    list_display = ('student', 'event', 'attended', 'attendance_button')
+    list_display = ('student', 'email', 'event', 'registered_at', 'attended')
 
     def attendance_button(self, obj):
         if not obj.attended:
@@ -19,3 +19,5 @@ class RegistrationAdmin(admin.ModelAdmin):
 
 admin.site.register(Event)
 admin.site.register(Profile)
+
+    

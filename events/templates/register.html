@@ -1,26 +1,42 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class="row justify-content-center">
-    <div class="col-md-6">
+<div class="container mt-4">
 
-        <div class="card shadow">
-            <div class="card-body">
-                <h3 class="text-center mb-4">Student Registration</h3>
+<h3>Student Registration</h3>
 
-                <form method="POST">
-                    {% csrf_token %}
-                    {{ form.as_p }}
+<form method="POST">
+    {% csrf_token %}
 
-                    <div class="d-grid">
-                        <button class="btn btn-primary">Create Account</button>
-                    </div>
-                </form>
-
-            </div>
-        </div>
-
+    <div class="mb-3">
+        <label>Username</label><br>
+        {{ form.username }}
     </div>
+
+    <div class="mb-3">
+        <label>Email</label><br>
+        {{ form.email }}
+    </div>
+
+    <div class="mb-3">
+        <label>Mobile Number</label><br>
+        {{ form.mobile_number }}
+    </div>
+
+    <div class="mb-3">
+        <label>Password</label><br>
+        {{ form.password }}
+    </div>
+
+    <div class="mb-3">
+        <label>Confirm Password</label><br>
+        {{ form.confirm_password }}
+    </div>
+
+    <button class="btn btn-primary">Register</button>
+
+</form>
+
 </div>
 
 {% endblock %}

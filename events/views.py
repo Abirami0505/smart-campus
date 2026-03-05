@@ -2,15 +2,18 @@ import uuid
 import qrcode
 
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login
+from django.utils import timezone
+from django.shortcuts import redirect
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.conf import settings
 from django.db import models
 from django.db.models import Count, Q
 from .models import Event, Registration, Profile
-
+from .forms import UserRegisterForm
 
 # -------------------------
 # REGISTER USER
@@ -34,37 +37,48 @@ def register(request):
 # -------------------------
 @login_required
 def dashboard(request):
-    events = Event.objects.all()
+    events = Event.objects.filter(registration_deadline__gt=timezone.now())
     profile = request.user.profile
+
     registrations = Registration.objects.filter(student=request.user)
 
-    registered_event_ids = [
-        reg.event_id for reg in registrations
-    ]
+    registered_event_ids = registrations.values_list('event_id', flat=True)
 
-    return render(request, 'dashboard.html', {
+    context = {
         'events': events,
         'profile': profile,
         'registrations': registrations,
         'registered_event_ids': registered_event_ids
-    })
+    }
 
-
+    return render(request, 'dashboard.html', context)
 # -------------------------
 # REGISTER FOR EVENT + GENERATE QR
 # -------------------------
 @login_required
-def register_event(request, event_id):
-    event = get_object_or_404(Event, id=event_id)
+def register(request):
+    if request.method == "POST":
+        form = UserRegisterForm(request.POST)
 
-    existing = Registration.objects.filter(
-        event=event,
-        student=request.user
-    ).first()
+        if form.is_valid():
+            user = User.objects.create_user(
+                username=form.cleaned_data['username'],
+                email=form.cleaned_data['email'],
+                password=form.cleaned_data['password']
+            )
 
-    if existing:
-        messages.info(request, "Already registered.")
-        return redirect('dashboard')
+            Profile.objects.create(
+                user=user,
+                mobile_number=form.cleaned_data['mobile_number']
+            )
+
+            return redirect('login')
+
+    else:
+        form = UserRegisterForm()
+
+    return render(request, "register.html", {"form": form})
+    # registration logic continues
 
     # Generate unique QR code string
     unique_code = str(uuid.uuid4())
@@ -180,3 +194,20 @@ def admin_dashboard(request):
         'attendance_rate': attendance_rate,
         'event_stats': event_stats,
     })
+@login_required
+def register_event(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+
+    # prevent duplicate registration
+    already_registered = Registration.objects.filter(
+        student=request.user,
+        event=event
+    ).exists()
+
+    if not already_registered:
+        Registration.objects.create(
+            student=request.user,
+            event=event
+        )
+
+    return redirect('dashboard')
